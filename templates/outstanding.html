@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Outstanding (उधारी)</h2>
+<p>एकूण बाकी: <b class="due">{{ '%.2f'|format(total) }}</b></p>
+<table>
+  <tr><th>Customer</th><th class="right">Billed (after returns)</th><th class="right">Paid</th><th class="right">Outstanding</th><th></th></tr>
+  {% for c, b, p, bal in rows %}
+  <tr>
+    <td>{{ c.name }}</td>
+    <td class="right">{{ '%.2f'|format(b) }}</td>
+    <td class="right">{{ '%.2f'|format(p) }}</td>
+    <td class="right {{ 'due' if bal > 0 else ('advance' if bal < 0) }}">{{ '%.2f'|format(bal) }}</td>
+    <td>
+      <a href="{{ url_for('ledger', cid=c.id) }}">Ledger</a> |
+      <a href="{{ url_for('payment_new', customer_id=c.id) }}">+ Payment</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="muted">हिरवा आकडा (उणे) म्हणजे customer ने आगाऊ पैसे दिले आहेत.</p>
+{% endblock %}

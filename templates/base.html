@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SA Brothers</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <span></span>
+    <div class="brand">SA Brothers</div>
+    {% if session.get('user_id') %}
+    <div class="user">
+      <span>{{ session['username'] }}</span>
+      <form method="post" action="{{ url_for('logout') }}"><button class="btn-light">Logout</button></form>
+    </div>
+    {% else %}<span></span>{% endif %}
+  </header>
+
+  {% if session.get('user_id') %}
+  <nav class="menubar">
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('stock') }}" class="{{ 'active' if request.endpoint == 'stock' }}">Stock</a>
+    <a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint in ['products', 'product_form'] }}">Products</a>
+    <a href="{{ url_for('purchases') }}" class="{{ 'active' if request.endpoint in ['purchases', 'purchase_new', 'purchase_detail'] }}">Purchases</a>
+    <a href="{{ url_for('suppliers') }}" class="{{ 'active' if request.endpoint in ['suppliers', 'supplier_form'] }}">Suppliers</a>
+    <a href="{{ url_for('sales') }}" class="{{ 'active' if request.endpoint in ['sales', 'sale_new', 'sale_detail'] }}">Sales</a>
+    <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers', 'customer_form'] }}">Customers</a>
+    <a href="{{ url_for('returns') }}" class="{{ 'active' if request.endpoint in ['returns', 'credit_note', 'sale_return', 'purchase_return_new'] }}">Returns</a>
+    <a href="{{ url_for('outstanding') }}" class="{{ 'active' if request.endpoint in ['outstanding', 'ledger'] }}">Outstanding</a>
+    <a href="{{ url_for('payments') }}" class="{{ 'active' if request.endpoint in ['payments', 'payment_new'] }}">Payments</a>
+    <a href="{{ url_for('supplier_payables') }}" class="{{ 'active' if request.endpoint in ['supplier_payables', 'supplier_ledger', 'supplier_payments', 'supplier_payment_new'] }}">Payables</a>
+    <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}">Reports</a>
+  </nav>
+  {% endif %}
+
+  <main class="container">
+    {% for cat, m in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat if cat != 'message' else '' }}">{{ m }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'Edit' if s.id else 'New' }} supplier</h2>
+<form method="post">
+  Name<br><input name="name" value="{{ s.name or '' }}" required><br>
+  GSTIN<br><input name="gstin" value="{{ s.gstin or '' }}" maxlength="15"><br>
+  Drug Licence No<br><input name="drug_licence_no" value="{{ s.drug_licence_no or '' }}"><br><br>
+  <button>Save</button> <a href="{{ url_for('suppliers') }}">Cancel</a>
+</form>
+{% endblock %}

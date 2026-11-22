@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Payments</h2>
+<a class="btn" href="{{ url_for('payment_new') }}">+ New payment</a><br><br>
+<table>
+  <tr><th>Date</th><th>Customer</th><th>Mode</th><th>Reference</th><th class="right">Amount</th></tr>
+  {% for p in items %}
+  <tr>
+    <td>{{ p.payment_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ p.customer.name }}</td>
+    <td>{{ p.mode }}</td>
+    <td>{{ p.reference or '' }}</td>
+    <td class="right">{{ '%.2f'|format(p.amount) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

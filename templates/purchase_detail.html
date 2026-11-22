@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Purchase: {{ p.bill_no }}</h2>
+<p>Supplier: <b>{{ p.supplier.name }}</b> &nbsp;|&nbsp; Date: <b>{{ p.bill_date.strftime('%d-%m-%Y') }}</b></p>
+{% set total = namespace(v=0) %}
+<table>
+  <tr><th>Product</th><th>Batch</th><th>Expiry</th><th>Purchase rate</th><th>Sale rate</th><th>Qty</th></tr>
+  {% for b in p.batches %}
+  {% set total.v = total.v + (b.purchase_rate * b.qty_received) %}
+  <tr>
+    <td>{{ b.product.name }}</td>
+    <td>{{ b.batch_no }}</td>
+    <td>{{ b.expiry_date.strftime('%m/%Y') }}</td>
+    <td>{{ b.purchase_rate }}</td>
+    <td>{{ b.sale_rate }}</td>
+    <td>{{ b.qty_received }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p><b>Total (before GST): {{ total.v }}</b></p>
+<a class="btn btn-light" href="{{ url_for('purchases') }}">Back</a>
+{% endblock %}

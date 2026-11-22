@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Supplier ledger: {{ s.name }}</h2>
+<p>
+  <a class="btn no-print" href="{{ url_for('supplier_payment_new', supplier_id=s.id) }}">+ Payment</a>
+  <button class="no-print" onclick="window.print()">Print</button>
+  <a class="btn btn-light no-print" href="{{ url_for('supplier_payables') }}">Back</a>
+</p>
+<table>
+  <tr><th>Date</th><th>Details</th><th class="right">खरेदी (देणे वाढले)</th><th class="right">Payment / Return (कमी)</th><th class="right">देणे बाकी</th></tr>
+  {% for d, desc, add, less, bal in rows %}
+  <tr>
+    <td>{{ d.strftime('%d-%m-%Y') }}</td>
+    <td>{{ desc }}</td>
+    <td class="right">{{ '%.2f'|format(add) if add else '' }}</td>
+    <td class="right">{{ '%.2f'|format(less) if less else '' }}</td>
+    <td class="right">{{ '%.2f'|format(bal) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>देणे बाकी: <b class="{{ 'due' if balance > 0 else 'advance' }}">{{ '%.2f'|format(balance) }}</b></p>
+{% endblock %}

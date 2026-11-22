@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Sales return: {{ sale.invoice_no }}</h2>
+<p>Customer: <b>{{ sale.customer.name }}</b></p>
+<form method="post">
+  <table>
+    <tr><th>Product</th><th>Batch</th><th>Sold</th><th>Already returned</th><th>Return qty</th></tr>
+    {% for i, already in lines %}
+    <tr>
+      <td>{{ i.product.name }}</td>
+      <td>{{ i.batch.batch_no }}</td>
+      <td>{{ i.qty }}</td>
+      <td>{{ already }}</td>
+      <td>
+        {% if i.qty - already > 0 %}
+        <input type="number" name="qty_{{ i.id }}" min="0" max="{{ i.qty - already }}" value="0">
+        {% else %}-{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <div class="row">
+    <div>Return date <input type="date" name="return_date" value="{{ today }}" required></div>
+    <div>Reason
+      <select name="reason">
+        <option>Wrong item</option>
+        <option>Damaged</option>
+        <option>Near expiry</option>
+        <option>Excess supply</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div>Add back to stock?
+      <select name="restock">
+        <option value="yes">Yes (good condition)</option>
+        <option value="no">No (damaged / expired)</option>
+      </select>
+    </div>
+  </div>
+  <button>Create credit note</button>
+  <a class="btn btn-light" href="{{ url_for('sale_detail', sid=sale.id) }}">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>New supplier payment</h2>
+<form method="post">
+  Supplier
+  <select name="supplier_id" required>
+    <option value="">-- select --</option>
+    {% for s in suppliers %}
+    <option value="{{ s.id }}" {{ 'selected' if s.id == selected }}>{{ s.name }}</option>
+    {% endfor %}
+  </select>
+  Date<br><input type="date" name="payment_date" value="{{ today }}" required><br>
+  Amount<br><input type="number" step="0.01" min="0.01" name="amount" required><br>
+  Mode
+  <select name="mode" required>
+    <option>Bank transfer</option>
+    <option>UPI</option>
+    <option>Cheque</option>
+    <option>Cash</option>
+  </select>
+  Reference (UTR / cheque no, ऐच्छिक)<br><input name="reference"><br><br>
+  <button>Save payment</button>
+  <a class="btn btn-light" href="{{ url_for('supplier_payables') }}">Cancel</a>
+</form>
+{% endblock %}

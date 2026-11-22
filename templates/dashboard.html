@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<p class="muted">{{ today.strftime('%d-%m-%Y') }} | विक्री म्हणजे returns वजा करून, GST सहित</p>
+
+<div class="cards">
+  <a class="stat" href="{{ url_for('sales') }}">
+    <div class="label">आजची विक्री</div>
+    <div class="value">₹ {{ '%.2f'|format(today_sales) }}</div>
+  </a>
+  <a class="stat" href="{{ url_for('sales') }}">
+    <div class="label">या महिन्याची विक्री</div>
+    <div class="value">₹ {{ '%.2f'|format(month_sales) }}</div>
+  </a>
+  <a class="stat {{ 'warn' if total_outstanding > 0 }}" href="{{ url_for('outstanding') }}">
+    <div class="label">एकूण उधारी (बाकी)</div>
+    <div class="value">₹ {{ '%.2f'|format(total_outstanding) }}</div>
+  </a>
+  <a class="stat {{ 'warn' if low_count > 0 }}" href="{{ url_for('stock') }}">
+    <div class="label">कमी stock (&lt; {{ low }})</div>
+    <div class="value">{{ low_count }} products</div>
+  </a>
+  <a class="stat {{ 'warn' if expiring_count > 0 }}" href="{{ url_for('stock') }}">
+    <div class="label">{{ days }} दिवसांत expire</div>
+    <div class="value">{{ expiring_count }} batches</div>
+  </a>
+  <a class="stat {{ 'bad' if expired_count > 0 }}" href="{{ url_for('stock') }}">
+    <div class="label">Expire झालेला माल</div>
+    <div class="value">{{ expired_count }} batches</div>
+    <div class="label">किंमत ₹ {{ '%.2f'|format(expired_value) }}</div>
+  </a>
+</div>
+
+<div class="grid2">
+  <div>
+    <h3>कमी stock</h3>
+    <table>
+      <tr><th>Product</th><th class="right">Qty</th></tr>
+      {% for p, q in low_items %}
+      <tr><td>{{ p.name }}</td><td class="right">{{ q }}</td></tr>
+      {% else %}
+      <tr><td colspan="2" class="muted">सर्व ठीक आहे</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div>
+    <h3>लवकर expire होणारा माल</h3>
+    <table>
+      <tr><th>Product</th><th>Batch</th><th>Expiry</th><th class="right">Qty</th><th class="right">दिवस</th></tr>
+      {% for b in expiring %}
+      <tr>
+        <td>{{ b.product.name }}</td>
+        <td>{{ b.batch_no }}</td>
+        <td>{{ b.expiry_date.strftime('%m/%Y') }}</td>
+        <td class="right">{{ b.qty_available }}</td>
+        <td class="right">{{ (b.expiry_date - today).days }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">काही नाही</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div>
+    <h3>सर्वात जास्त उधारी</h3>
+    <table>
+      <tr><th>Customer</th><th class="right">बाकी</th><th></th></tr>
+      {% for c, bal in top_due %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td class="right due">{{ '%.2f'|format(bal) }}</td>
+        <td><a href="{{ url_for('ledger', cid=c.id) }}">Ledger</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3" class="muted">कोणाचीही उधारी नाही</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div>
+    <h3>अलीकडचे बिल</h3>
+    <table>
+      <tr><th>Date</th><th>Invoice</th><th>Customer</th><th class="right">Total</th></tr>
+      {% for s in recent_sales %}
+      <tr>
+        <td>{{ s.invoice_date.strftime('%d-%m-%Y') }}</td>
+        <td><a href="{{ url_for('sale_detail', sid=s.id) }}">{{ s.invoice_no }}</a></td>
+        <td>{{ s.customer.name }}</td>
+        <td class="right">{{ '%.2f'|format(s.grand_total) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="muted">अजून बिल नाही</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

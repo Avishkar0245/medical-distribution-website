@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Suppliers</h2>
+<a href="{{ url_for('supplier_form') }}">+ Add supplier</a><br><br>
+<table>
+  <tr><th>Name</th><th>GSTIN</th><th>Drug Licence No</th><th></th></tr>
+  {% for s in items %}
+  <tr><td>{{ s.name }}</td><td>{{ s.gstin }}</td><td>{{ s.drug_licence_no }}</td>
+      <td><a href="{{ url_for('supplier_form', sid=s.id) }}">Edit</a>
+        <a href="{{ url_for('supplier_ledger', sid=s.id) }}">Ledger</a>
+      </td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

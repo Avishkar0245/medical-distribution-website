@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Return to supplier</h2>
+<p>
+  Product: <b>{{ b.product.name }}</b><br>
+  Batch: <b>{{ b.batch_no }}</b> | Expiry: <b>{{ b.expiry_date.strftime('%m/%Y') }}</b><br>
+  Supplier: <b>{{ b.purchase.supplier.name }}</b><br>
+  Available qty: <b>{{ b.qty_available }}</b>
+</p>
+<form method="post">
+  Return qty<br><input type="number" name="qty" min="1" max="{{ b.qty_available }}" required><br>
+  Date<br><input type="date" name="return_date" value="{{ today }}" required><br>
+  Reason
+  <select name="reason">
+    <option>Expired</option>
+    <option>Near expiry</option>
+    <option>Damaged</option>
+    <option>Other</option>
+  </select><br>
+  <button>Save return</button>
+  <a class="btn btn-light" href="{{ url_for('stock') }}">Cancel</a>
+</form>
+{% endblock %}

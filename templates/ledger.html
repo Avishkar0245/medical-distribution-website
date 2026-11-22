@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Ledger: {{ c.name }}</h2>
+<p>
+  <a class="btn no-print" href="{{ url_for('payment_new', customer_id=c.id) }}">+ Payment</a>
+  <button class="no-print" onclick="window.print()">Print</button>
+  <a class="btn btn-light no-print" href="{{ url_for('outstanding') }}">Back</a>
+</p>
+<table>
+  <tr><th>Date</th><th>Details</th><th class="right">Debit (बिल)</th><th class="right">Credit (जमा)</th><th class="right">Balance</th></tr>
+  {% for d, desc, debit, credit, bal in rows %}
+  <tr>
+    <td>{{ d.strftime('%d-%m-%Y') }}</td>
+    <td>{{ desc }}</td>
+    <td class="right">{{ '%.2f'|format(debit) if debit else '' }}</td>
+    <td class="right">{{ '%.2f'|format(credit) if credit else '' }}</td>
+    <td class="right">{{ '%.2f'|format(bal) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>बाकी: <b class="{{ 'due' if balance > 0 else 'advance' }}">{{ '%.2f'|format(balance) }}</b></p>
+{% endblock %}

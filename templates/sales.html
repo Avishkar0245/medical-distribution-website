@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Sales</h2>
+<a class="btn" href="{{ url_for('sale_new') }}">+ New invoice</a><br><br>
+<table>
+  <tr><th>Date</th><th>Invoice</th><th>Customer</th><th class="right">Total</th><th></th></tr>
+  {% for s in items %}
+  <tr>
+    <td>{{ s.invoice_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ s.invoice_no }}</td>
+    <td>{{ s.customer.name }}</td>
+    <td class="right">{{ '%.2f'|format(s.grand_total) }}</td>
+    <td><a href="{{ url_for('sale_detail', sid=s.id) }}">View</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

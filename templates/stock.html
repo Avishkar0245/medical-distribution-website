@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stock</h2>
+<form class="toolbar">
+  <input name="q" value="{{ q }}" placeholder="Search product">
+  <button>Search</button>
+</form>
+
+<h3>Product-wise stock</h3>
+<p class="muted">फक्त expire न झालेला माल मोजला आहे. Low stock मर्यादा: {{ low }}</p>
+<table>
+  <tr><th>Product</th><th>Company</th><th>Pack</th><th>Available qty</th><th>Status</th></tr>
+  {% for p, qty in totals %}
+  <tr>
+    <td>{{ p.name }}</td>
+    <td>{{ p.company }}</td>
+    <td>{{ p.pack }}</td>
+    <td>{{ qty }}</td>
+    <td>
+      {% if qty == 0 %}<span class="badge badge-out">Out of stock</span>
+      {% elif qty < low %}<span class="badge badge-low">Low</span>
+      {% else %}<span class="badge badge-ok">OK</span>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3 style="margin-top:32px">Batch-wise stock</h3>
+<p class="muted">पिवळी row: लवकर expire होणार. लाल row: expire झालेला माल (विकू नका).</p>
+<table>
+  <tr><th>Product</th><th>Batch</th><th>Expiry</th><th>Qty</th><th>Purchase rate</th><th>Sale rate</th><th></th></tr>
+  {% for b in batches %}
+  <tr class="{{ 'expired' if b.expiry_date < today else ('soon' if b.expiry_date <= soon) }}">
+    <td>{{ b.product.name }}</td>
+    <td>{{ b.batch_no }}</td>
+    <td>{{ b.expiry_date.strftime('%m/%Y') }}</td>
+    <td>{{ b.qty_available }}</td>
+    <td>{{ b.purchase_rate }}</td>
+    <td>{{ b.sale_rate }}</td>
+    <td>
+      {% if b.expiry_date < today %}<span class="badge badge-out">Expired</span>
+      {% elif b.expiry_date <= soon %}<span class="badge badge-low">Expiring soon</span>{% endif %}
+      <a href="{{ url_for('purchase_return_new', bid=b.id) }}">Return to supplier</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

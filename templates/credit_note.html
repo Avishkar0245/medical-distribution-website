@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="invoice-head">
+  <div>
+    <h2>Credit Note</h2>
+    <b>SA Brothers</b><br>
+    <span class="muted">[दुकानाचा पत्ता] | GSTIN: [तुमचा GSTIN] | Drug Licence: [Licence no]</span>
+  </div>
+  <div>
+    Credit note no: <b>{{ r.credit_note_no }}</b><br>
+    Date: <b>{{ r.return_date.strftime('%d-%m-%Y') }}</b><br>
+    Against invoice: <b>{{ r.sale.invoice_no }}</b>
+  </div>
+</div>
+
+<p><b>Customer:</b> {{ r.customer.name }}<br>
+GSTIN: {{ r.customer.gstin or '-' }} | Reason: {{ r.reason }}</p>
+
+<table>
+  <tr><th>Product</th><th>Batch</th><th class="right">Qty</th><th class="right">Rate</th><th class="right">GST %</th><th class="right">Amount</th><th>Stock</th></tr>
+  {% for i in r.items %}
+  <tr>
+    <td>{{ i.product.name }}</td>
+    <td>{{ i.batch.batch_no }}</td>
+    <td class="right">{{ i.qty }}</td>
+    <td class="right">{{ '%.2f'|format(i.rate) }}</td>
+    <td class="right">{{ i.gst_percent }}</td>
+    <td class="right">{{ '%.2f'|format(i.taxable_amount) }}</td>
+    <td>{{ 'Added back' if i.restocked else 'Not added' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<table class="totals">
+  <tr><td>Taxable amount</td><td class="right">{{ '%.2f'|format(r.subtotal) }}</td></tr>
+  <tr><td>CGST</td><td class="right">{{ '%.2f'|format(r.gst_total / 2) }}</td></tr>
+  <tr><td>SGST</td><td class="right">{{ '%.2f'|format(r.gst_total / 2) }}</td></tr>
+  <tr><td>Round off</td><td class="right">{{ '%.2f'|format(r.round_off) }}</td></tr>
+  <tr><td>Credit total</td><td class="right">{{ '%.2f'|format(r.grand_total) }}</td></tr>
+</table>
+<br>
+<button class="no-print" onclick="window.print()">Print</button>
+<a class="btn btn-light no-print" href="{{ url_for('returns') }}">Back</a>
+{% endblock %}

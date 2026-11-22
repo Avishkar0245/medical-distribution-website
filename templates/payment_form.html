@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>New payment</h2>
+<form method="post">
+  Customer
+  <select name="customer_id" required>
+    <option value="">-- select --</option>
+    {% for c in customers %}
+    <option value="{{ c.id }}" {{ 'selected' if c.id == selected }}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  Date<br><input type="date" name="payment_date" value="{{ today }}" required><br>
+  Amount<br><input type="number" step="0.01" min="0.01" name="amount" required><br>
+  Mode
+  <select name="mode" required>
+    <option>Cash</option>
+    <option>UPI</option>
+    <option>Bank transfer</option>
+    <option>Cheque</option>
+  </select>
+  Reference (UPI id / cheque no, ऐच्छिक)<br><input name="reference"><br><br>
+  <button>Save payment</button>
+  <a class="btn btn-light" href="{{ url_for('payments') }}">Cancel</a>
+</form>
+{% endblock %}

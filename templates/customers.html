@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Customers</h2>
+<a href="{{ url_for('customer_form') }}">+ Add customer</a><br><br>
+<table>
+  <tr><th>Name</th><th>GSTIN</th><th>Drug Licence No</th><th>Phone</th><th></th></tr>
+  {% for c in items %}
+  <tr><td>{{ c.name }}</td><td>{{ c.gstin }}</td><td>{{ c.drug_licence_no }}</td><td>{{ c.phone }}</td>
+      <td><a href="{{ url_for('customer_form', cid=c.id) }}">Edit</a><a href="{{ url_for('ledger', cid=c.id) }}">Ledger</a></td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

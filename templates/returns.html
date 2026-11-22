@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Returns</h2>
+
+<h3>Sales returns (credit notes)</h3>
+<p class="muted">नवीन return साठी Sales मधून invoice उघडा आणि "Return items" दाबा.</p>
+<table>
+  <tr><th>Date</th><th>Credit note</th><th>Invoice</th><th>Customer</th><th>Reason</th><th class="right">Amount</th><th></th></tr>
+  {% for r in credit_notes %}
+  <tr>
+    <td>{{ r.return_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ r.credit_note_no }}</td>
+    <td>{{ r.sale.invoice_no }}</td>
+    <td>{{ r.customer.name }}</td>
+    <td>{{ r.reason }}</td>
+    <td class="right">{{ '%.2f'|format(r.grand_total) }}</td>
+    <td><a href="{{ url_for('credit_note', rid=r.id) }}">View</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3 style="margin-top:32px">Supplier returns (expiry / damaged)</h3>
+<p class="muted">नवीन return साठी Stock मधील batch च्या शेजारी "Return to supplier" दाबा.</p>
+<table>
+  <tr><th>Date</th><th>Supplier</th><th>Product</th><th>Batch</th><th class="right">Qty</th><th class="right">Value (before GST)</th><th>Reason</th></tr>
+  {% for r in supplier_returns %}
+  <tr>
+    <td>{{ r.return_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ r.supplier.name }}</td>
+    <td>{{ r.batch.product.name }}</td>
+    <td>{{ r.batch.batch_no }}</td>
+    <td class="right">{{ r.qty }}</td>
+    <td class="right">{{ '%.2f'|format(r.rate * r.qty) }}</td>
+    <td>{{ r.reason }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

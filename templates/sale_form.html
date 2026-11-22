@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>New invoice</h2>
+<form method="post">
+  <div class="row">
+    <div>Customer
+      <select name="customer_id" required>
+        <option value="">-- select --</option>
+        {% for c in customers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>Date <input type="date" name="invoice_date" value="{{ today }}" required></div>
+  </div>
+
+  <table class="items">
+    <thead><tr><th>Product</th><th>Qty</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <button type="button" class="btn btn-light" id="addRow">+ Add row</button>
+  <br><br>
+  <button>Create invoice</button>
+  <a class="btn btn-light" href="{{ url_for('sales') }}">Cancel</a>
+</form>
+
+<template id="rowTpl">
+  <tr>
+    <td>
+      <select name="product_id" required>
+        <option value="">-- select --</option>
+        {% for p in products %}
+        <option value="{{ p.id }}">{{ p.name }} ({{ p.pack }}) - stock: {{ avail.get(p.id, 0) }}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td><input type="number" min="1" name="qty" required></td>
+    <td><button type="button" class="btn btn-light remove">✕</button></td>
+  </tr>
+</template>
+
+<script>
+  const rows = document.getElementById("rows");
+  const tpl = document.getElementById("rowTpl");
+  function addRow() { rows.appendChild(tpl.content.cloneNode(true)); }
+  document.getElementById("addRow").addEventListener("click", addRow);
+  rows.addEventListener("click", function (e) {
+    if (e.target.classList.contains("remove") && rows.children.length > 1) {
+      e.target.closest("tr").remove();
+    }
+  });
+  addRow();
+</script>
+{% endblock %}

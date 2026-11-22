@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Payables (supplier ला देणे)</h2>
+<p>एकूण देणे: <b class="due">{{ '%.2f'|format(total) }}</b>
+  &nbsp; <a class="btn" href="{{ url_for('supplier_payment_new') }}">+ Supplier payment</a>
+  <a class="btn btn-light" href="{{ url_for('supplier_payments') }}">सर्व payments</a></p>
+<table>
+  <tr><th>Supplier</th><th class="right">Purchases (GST सहित)</th><th class="right">Paid + Returns</th><th class="right">देणे बाकी</th><th></th></tr>
+  {% for s, bought, reduced, bal in rows %}
+  <tr>
+    <td>{{ s.name }}</td>
+    <td class="right">{{ '%.2f'|format(bought) }}</td>
+    <td class="right">{{ '%.2f'|format(reduced) }}</td>
+    <td class="right {{ 'due' if bal > 0 else ('advance' if bal < 0) }}">{{ '%.2f'|format(bal) }}</td>
+    <td>
+      <a href="{{ url_for('supplier_ledger', sid=s.id) }}">Ledger</a> |
+      <a href="{{ url_for('supplier_payment_new', supplier_id=s.id) }}">+ Payment</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="muted">हिरवा आकडा (उणे) म्हणजे तुम्ही supplier ला आगाऊ पैसे दिले आहेत.</p>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Supplier payments</h2>
+<a class="btn" href="{{ url_for('supplier_payment_new') }}">+ New payment</a>
+<a class="btn btn-light" href="{{ url_for('supplier_payables') }}">Back</a><br><br>
+<table>
+  <tr><th>Date</th><th>Supplier</th><th>Mode</th><th>Reference</th><th class="right">Amount</th></tr>
+  {% for p in items %}
+  <tr>
+    <td>{{ p.payment_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ p.supplier.name }}</td>
+    <td>{{ p.mode }}</td>
+    <td>{{ p.reference or '' }}</td>
+    <td class="right">{{ '%.2f'|format(p.amount) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

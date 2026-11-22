@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'Edit' if c.id else 'New' }} customer</h2>
+<form method="post">
+  Name<br><input name="name" value="{{ c.name or '' }}" required><br>
+  GSTIN<br><input name="gstin" value="{{ c.gstin or '' }}" maxlength="15"><br>
+  Drug Licence No<br><input name="drug_licence_no" value="{{ c.drug_licence_no or '' }}"><br>
+  Phone<br><input name="phone" value="{{ c.phone or '' }}"><br><br>
+  <button>Save</button> <a href="{{ url_for('customers') }}">Cancel</a>
+</form>
+{% endblock %}

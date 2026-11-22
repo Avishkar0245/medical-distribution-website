@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="invoice-head">
+  <div>
+    <h2>Tax Invoice</h2>
+    <b>SA Brothers</b><br>
+    <span class="muted">[दुकानाचा पत्ता] | GSTIN: [तुमचा GSTIN] | Drug Licence: [Licence no]</span>
+  </div>
+  <div>
+    Invoice no: <b>{{ s.invoice_no }}</b><br>
+    Date: <b>{{ s.invoice_date.strftime('%d-%m-%Y') }}</b>
+  </div>
+</div>
+
+<p><b>Bill to:</b> {{ s.customer.name }}<br>
+GSTIN: {{ s.customer.gstin or '-' }} | Drug Licence: {{ s.customer.drug_licence_no or '-' }}</p>
+
+<table>
+  <tr><th>Product</th><th>Batch</th><th>Exp</th><th class="right">Qty</th><th class="right">Rate</th><th class="right">GST %</th><th class="right">Amount</th></tr>
+  {% for i in s.items %}
+  <tr>
+    <td>{{ i.product.name }}</td>
+    <td>{{ i.batch.batch_no }}</td>
+    <td>{{ i.batch.expiry_date.strftime('%m/%Y') }}</td>
+    <td class="right">{{ i.qty }}</td>
+    <td class="right">{{ '%.2f'|format(i.rate) }}</td>
+    <td class="right">{{ i.gst_percent }}</td>
+    <td class="right">{{ '%.2f'|format(i.taxable_amount) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<table class="totals">
+  <tr><td>Taxable amount</td><td class="right">{{ '%.2f'|format(s.subtotal) }}</td></tr>
+  <tr><td>CGST</td><td class="right">{{ '%.2f'|format(s.gst_total / 2) }}</td></tr>
+  <tr><td>SGST</td><td class="right">{{ '%.2f'|format(s.gst_total / 2) }}</td></tr>
+  <tr><td>Round off</td><td class="right">{{ '%.2f'|format(s.round_off) }}</td></tr>
+  <tr><td>Grand total</td><td class="right">{{ '%.2f'|format(s.grand_total) }}</td></tr>
+</table>
+
+<br>
+<button class="no-print" onclick="window.print()">Print</button>
+<a class="btn btn-light no-print" href="{{ url_for('sale_return', sid=s.id) }}">Return items</a>
+<a class="btn btn-light no-print" href="{{ url_for('sales') }}">Back</a>
+{% endblock %}

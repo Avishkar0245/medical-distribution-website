@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Purchases</h2>
+<a class="btn" href="{{ url_for('purchase_new') }}">+ New purchase</a><br><br>
+<table>
+  <tr><th>Date</th><th>Bill no</th><th>Supplier</th><th>Items</th><th></th></tr>
+  {% for p in items %}
+  <tr>
+    <td>{{ p.bill_date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ p.bill_no }}</td>
+    <td>{{ p.supplier.name }}</td>
+    <td>{{ p.batches|length }}</td>
+    <td><a href="{{ url_for('purchase_detail', pid=p.id) }}">View</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

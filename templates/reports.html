@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Reports</h2>
+
+<form class="toolbar" method="get">
+  From <input type="date" name="from" value="{{ start }}" required>
+  To <input type="date" name="to" value="{{ end }}" required>
+  <button>Show</button>
+</form>
+
+<div class="cards">
+  <div class="stat">
+    <div class="label">निव्वळ विक्री (GST वगळून)</div>
+    <div class="value">₹ {{ '%.2f'|format(net_sales) }}</div>
+  </div>
+  <div class="stat">
+    <div class="label">निव्वळ खरेदी (GST वगळून)</div>
+    <div class="value">₹ {{ '%.2f'|format(net_purchases) }}</div>
+  </div>
+  <div class="stat">
+    <div class="label">Output GST (विक्रीवर)</div>
+    <div class="value">₹ {{ '%.2f'|format(output_gst) }}</div>
+  </div>
+  <div class="stat">
+    <div class="label">Input GST (खरेदीवर)</div>
+    <div class="value">₹ {{ '%.2f'|format(input_gst) }}</div>
+  </div>
+  <div class="stat {{ 'warn' if net > 0 }}">
+    <div class="label">Output - Input</div>
+    <div class="value">₹ {{ '%.2f'|format(net) }}</div>
+  </div>
+</div>
+
+<h3>GST दरानुसार सारांश ({{ start.strftime('%d-%m-%Y') }} ते {{ end.strftime('%d-%m-%Y') }})</h3>
+<table>
+  <tr>
+    <th>GST %</th>
+    <th class="right">Sales taxable</th><th class="right">Sales GST</th>
+    <th class="right">Credit note taxable</th><th class="right">Credit note GST</th>
+    <th class="right">Purchase taxable</th><th class="right">Purchase GST</th>
+    <th class="right">Supp. return taxable</th><th class="right">Supp. return GST</th>
+  </tr>
+  {% for rate, v in rows %}
+  <tr>
+    <td>{{ rate }}</td>
+    <td class="right">{{ '%.2f'|format(v.sales_t) }}</td><td class="right">{{ '%.2f'|format(v.sales_g) }}</td>
+    <td class="right">{{ '%.2f'|format(v.ret_t) }}</td><td class="right">{{ '%.2f'|format(v.ret_g) }}</td>
+    <td class="right">{{ '%.2f'|format(v.pur_t) }}</td><td class="right">{{ '%.2f'|format(v.pur_g) }}</td>
+    <td class="right">{{ '%.2f'|format(v.pret_t) }}</td><td class="right">{{ '%.2f'|format(v.pret_g) }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="9" class="muted">या कालावधीत काहीही व्यवहार नाही</td></tr>
+  {% endfor %}
+</table>
+
+<h3 style="margin-top:32px">Excel download (वरील कालावधीसाठी)</h3>
+<p>
+  <a class="btn" href="{{ url_for('report_export', kind='sales') }}?from={{ start }}&to={{ end }}">Sales + credit notes</a>
+  <a class="btn" href="{{ url_for('report_export', kind='purchases') }}?from={{ start }}&to={{ end }}">Purchases + supplier returns</a>
+  <a class="btn" href="{{ url_for('report_export', kind='gst') }}?from={{ start }}&to={{ end }}">GST summary</a>
+</p>
+<p class="muted">खालील दोन reports आजच्या स्थितीचे आहेत, तारखेवर अवलंबून नाहीत:</p>
+<p>
+  <a class="btn btn-light" href="{{ url_for('report_export', kind='stock') }}">Stock (batch-wise)</a>
+  <a class="btn btn-light" href="{{ url_for('report_export', kind='outstanding') }}">Customer outstanding</a>
+</p>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color: aqua; background-color: aliceblue; text-align: center; height: 400%;">Products</h2>
+<form><input name="q" value="{{ q }}" placeholder="Search"> <button>Search</button>
+<a href="{{ url_for('product_form') }}">+ Add product</a></form><br>
+<table>
+  <tr><th>Name</th><th>Company</th><th>Pack</th><th>GST %</th><th>MRP</th><th></th></tr>
+  {% for p in items %}
+  <tr><td>{{ p.name }}</td><td>{{ p.company }}</td><td>{{ p.pack }}</td>
+      <td>{{ p.gst_percent }}</td><td>{{ p.mrp }}</td>
+      <td><a href="{{ url_for('product_form', pid=p.id) }}">Edit</a></td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
